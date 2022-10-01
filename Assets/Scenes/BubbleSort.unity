@@ -509,6 +509,11 @@ MonoBehaviour:
   - {fileID: 204301687}
   - {fileID: 1439669588}
   number_object: {fileID: 8194883295414391489, guid: 4b630d7d06556a74ebbb91f28c449c5b, type: 3}
+  compare_material: {fileID: 2100000, guid: eea321d85243ea64ab08a326e9fc136a, type: 2}
+  bigger_material: {fileID: 2100000, guid: 781c27b2835b41041bd2081d5de1e3b6, type: 2}
+  normal_m: {fileID: 2100000, guid: 227be8b5a25b5dd4486887b18537891e, type: 2}
+  unsorted_objects: []
+  sort_objects: 0
 --- !u!4 &653877110
 Transform:
   m_ObjectHideFlags: 0
