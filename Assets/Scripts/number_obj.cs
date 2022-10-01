@@ -11,10 +11,21 @@ public class number_obj : MonoBehaviour
 
     void Start()
     {
+
+    }
+
+    private void Awake()
+    {
         this.object_value = Random.Range(1, 20);
+        gameObject.name = object_value.ToString();
         this.initial_obj_scale = gameObject.transform.localScale;
         this.initial_obj_scale.y = object_value * 0.5f;
         this.gameObject.transform.localScale = initial_obj_scale;
+    }
+
+    public int get_obj_value()
+    {
+        return this.object_value;
     }
 
     void Update()

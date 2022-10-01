@@ -6,7 +6,8 @@ public class main_controls : MonoBehaviour
 {
     [SerializeField] List<GameObject> positions;
     [SerializeField] GameObject number_object;
-    List<GameObject> unsorted_objects;
+    public List<GameObject> unsorted_objects;
+    private number_obj stats;
     public bool sort_objects = false;
     void Start()
     {
@@ -14,21 +15,36 @@ public class main_controls : MonoBehaviour
         for (int i = 0; i < positions.Count; i++)
         {
             number_object.transform.position = positions[i].transform.position;
-            Instantiate(number_object);
-            this.unsorted_objects.Add(number_object);
+            unsorted_objects.Add(Instantiate(number_object));
         }
 
-        int[] array = new int[] { 1, 10, 3, 5, 8, 3, 4, 9, 6};
-        bubble_sort_test(array);
+
+        sort();
+        //sort_objects_bubble_sort();
+        //for (int i = 0; i < unsorted_objects.Count; i++)
+        //{
+        //    Debug.Log(unsorted_objects[i].GetComponent<number_obj>().object_value);
+        //}
     }
 
     void Update()
     {
-        if (sort_objects)
-        {
-            sort_objects_bubble_sort();
-        }
+ 
     }
+
+    private IEnumerator wait_for_a_bit() 
+    {
+        yield return new WaitForSeconds(5f);
+        sort_objects_bubble_sort();
+        replace_sorted_positions();
+
+    }
+
+    private void sort()
+    {
+        StartCoroutine(wait_for_a_bit());
+    }
+
 
     private void sort_objects_bubble_sort() 
     {
@@ -57,7 +73,7 @@ public class main_controls : MonoBehaviour
     {
         for (int i = 0; i < unsorted_objects.Count; i++)
         {
-            
+            unsorted_objects[i].transform.position = positions[i].transform.position;
         }
     }
 
