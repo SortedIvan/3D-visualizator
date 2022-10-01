@@ -1,4 +1,4 @@
-# 3D-algo
+# 3D Algorithm Visualizer
 A visualization environment (built with Unity3D) of sorting and search algorithms <br/>
 Currently the project contains: <br/>
 - Bubble Sort <br/>
