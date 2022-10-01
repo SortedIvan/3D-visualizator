@@ -4,18 +4,64 @@ using UnityEngine;
 
 public class main_controls : MonoBehaviour
 {
+    [Header("Positions, objects & materials")]
     [SerializeField] List<GameObject> positions;
     [SerializeField] GameObject number_object;
-    [SerializeField] Material compare_material;
-    [SerializeField] Material bigger_material;
-    [SerializeField] Material normal_m;
+    [SerializeField] Material red_material;
+    [SerializeField] Material green_material;
+    [SerializeField] Material white_material;
+
+    [SerializeField] float solve_time = 2f;
     public List<GameObject> unsorted_objects;
-    private Vector3 force_obj_down = new Vector3(0.0f, -15f, 0.0f);
+
+    [Header("Algorithm script references")]
+    [SerializeField] GameObject scripts_holder;
+    private bubble_sort bubble_sort_script;
+
+
     private GameObject temporary;
-    public bool sort_objects = false;
+     
+    
+
     void Start()
     {
+        bubble_sort_script = scripts_holder.GetComponent<bubble_sort>();
+
+
         this.unsorted_objects = new List<GameObject>();
+
+        // Populate the list with objects and parent them to the positions
+        populate_list_obj();
+
+        // Bubble sort
+        //bubble_sort(unsorted_objects);
+
+
+        // Selection sort
+        selection_sort_test(unsorted_objects);
+    }
+
+    void Update()
+    {
+        
+    }
+
+    private IEnumerator wait_bubble_sort(List<GameObject> unsorted_objects) 
+    {
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(
+            bubble_sort_script.sort_objects_bubble_sort(
+                unsorted_objects, red_material,white_material,green_material));
+
+    }
+
+    private void bubble_sort(List<GameObject> unsorted_objects)
+    {
+        StartCoroutine(wait_bubble_sort(unsorted_objects));
+    }
+
+    private void populate_list_obj()
+    {
         for (int i = 0; i < positions.Count; i++)
         {
             number_object.transform.position = positions[i].transform.position;
@@ -24,139 +70,41 @@ public class main_controls : MonoBehaviour
             temporary.transform.SetParent(positions[i].transform);
         }
 
-
-        sort();
-        //sort_objects_bubble_sort();
-        //for (int i = 0; i < unsorted_objects.Count; i++)
-        //{
-        //    Debug.Log(unsorted_objects[i].GetComponent<number_obj>().object_value);
-        //}
     }
 
-    void Update()
+
+    private IEnumerator selection_sort_test(List<GameObject> unsorted_list)
     {
- 
-    }
-
-    private IEnumerator wait_for_a_bit() 
-    {
-        yield return new WaitForSeconds(5f);
-        StartCoroutine(sort_objects_bubble_sort());
-
-    }
-
-    private void sort()
-    {
-        StartCoroutine(wait_for_a_bit());
-    }
-
-    private IEnumerator sort_objects_bubble_sort() 
-    {
-        GameObject temporary;
-        Transform parent1;
-        Transform parent2;
-        int k = unsorted_objects.Count;
-        bool sorted = false;
-
-        while (k > 1 && !sorted)
+        GameObject min_value;
+        GameObject temp;
+        for(int i = 0; i < unsorted_list.Count; i++) 
         {
-            sorted = true;
-            for (int i = 0; i < k - 1; i++)
+            int minIndex = i;
+            unsorted_objects[minIndex].GetComponent<Renderer>().material = red_material;
+            yield return new WaitForSeconds(1f);
+            min_value = unsorted_list[i];
+            for (int j = i + 1; j < unsorted_list.Count; j++)
             {
-                unsorted_objects[i].GetComponent<Renderer>().material = compare_material;
-                unsorted_objects[i + 1].GetComponent<Renderer>().material = compare_material;
-                yield return new WaitForSeconds(1f);
-                if (unsorted_objects[i].GetComponent<number_obj>().object_value > 
-                    unsorted_objects[i + 1].GetComponent<number_obj>().object_value) 
+                unsorted_objects[j].GetComponent<Renderer>().material = red_material;
+                if (unsorted_list[j].GetComponent<number_obj>().object_value.
+                    CompareTo(min_value.GetComponent<number_obj>().object_value) < 0)
                 {
-                    unsorted_objects[i].GetComponent<Renderer>().material = bigger_material;
-                    yield return new WaitForSeconds(1f);
-                    sorted = false;
-                    temporary = unsorted_objects[i + 1];
-                    unsorted_objects[i + 1] = unsorted_objects[i];
-                    unsorted_objects[i] = temporary;
+                    // new smallest value
+                    unsorted_objects[j].GetComponent<Renderer>().material = green_material;
+                    minIndex = j;
+                    min_value = unsorted_list[j];
 
-                    parent1 = unsorted_objects[i].transform.parent;
-                    parent2 = unsorted_objects[i + 1].transform.parent;
 
-                    unsorted_objects[i].transform.position = parent2.position;
-                    unsorted_objects[i + 1].transform.position = parent1.position;
 
-                    unsorted_objects[i].gameObject.transform.SetParent(parent2);
-                    unsorted_objects[i + 1].gameObject.transform.SetParent(parent1);
-
-                    unsorted_objects[i].gameObject.GetComponent<Renderer>().material = normal_m;
-                    yield return new WaitForSeconds(2f);
-                }
-
-                unsorted_objects[i].GetComponent<Renderer>().material = normal_m;
-                unsorted_objects[i + 1].GetComponent<Renderer>().material = normal_m;
-            }
-        }
-    }
-
-    private void sort_objects_bubble_sort_2()
-    {
-        GameObject temporary;
-        int k = unsorted_objects.Count;
-        bool sorted = false;
-
-        while (k > 1 && !sorted)
-        {
-            sorted = true;
-            for (int i = 0; i < k - 1; i++)
-            {
-                if (unsorted_objects[i].GetComponent<number_obj>().object_value >
-                    unsorted_objects[i + 1].GetComponent<number_obj>().object_value)
-                {
-                    sorted = false;
-                    temporary = unsorted_objects[i + 1];
-                    unsorted_objects[i + 1] = unsorted_objects[i];
-                    unsorted_objects[i] = temporary;
-                    
                 }
             }
+
+            temp = unsorted_list[i];
+            unsorted_list[i] = unsorted_list[minIndex];
+            unsorted_list[minIndex] = temp;
         }
+
     }
 
-
-
-
-    private void replace_sorted_positions()
-    {
-        for (int i = 0; i < unsorted_objects.Count; i++)
-        {
-            unsorted_objects[i].transform.position = positions[i].transform.position;
-        }
-    }
-
-    private void bubble_sort_test(int[] unsorted_list) 
-    {
-        bool sorted = false;
-        int temporary;
-        int k = unsorted_list.Length - 1;
-
-        while (k > 1 && !sorted) 
-        {
-            sorted = true;
-            for(int i = 0; i < unsorted_list.Length - 1; i++) 
-            {
-                if (unsorted_list[i] > unsorted_list[i + 1]) 
-                {
-                    sorted = false;
-                    temporary = unsorted_list[i + 1];
-                    unsorted_list[i + 1] = unsorted_list[i];
-                    unsorted_list[i] = temporary;
-                }
-            }
-            k--;
-        }
-
-        for (int i = 0; i < unsorted_list.Length - 1; i++)
-        {
-            Debug.Log(unsorted_list[i]);
-        }
-        
-    }
 
 }
