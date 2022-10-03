@@ -35,7 +35,7 @@ public class main_controls : MonoBehaviour
         populate_list_obj();
 
         //bubble_sort(unsorted_objects);
-        selection_sort(unsorted_objects);
+        start_selection_sort(unsorted_objects);
     }
 
     void Update()
@@ -73,15 +73,19 @@ public class main_controls : MonoBehaviour
     #endregion
 
     #region Selection Sort
-    private void selection_sort(List<GameObject> unsorted_objects)
+    private IEnumerator selection_sort(List<GameObject> unsorted_objects)
     {
+        yield return new WaitForSeconds(3f);
         StartCoroutine(
             selection_sort_script.selection_sort_test(
                 unsorted_objects, green_material, white_material, red_material)
         );
     }
 
-   
+    private void start_selection_sort(List<GameObject> unsorted_objects)
+    {
+        StartCoroutine(selection_sort(unsorted_objects));
+    }
 
     #endregion
 
